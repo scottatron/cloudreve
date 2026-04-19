@@ -17,7 +17,7 @@ ENV CR_ENABLE_ARIA2=1 \
     CR_SETTING_DEFAULT_thumb_libraw_enabled=1
 
 COPY .build/aria2.supervisor.conf .build/entrypoint.sh ./
-COPY cloudreve ./cloudreve
+COPY --from=cloudreve-binary /cloudreve /cloudreve
 
 RUN chmod +x ./cloudreve \
     && chmod +x ./entrypoint.sh
@@ -27,4 +27,3 @@ EXPOSE 5212 443 6888 6888/udp
 VOLUME ["/cloudreve/data"]
 
 ENTRYPOINT ["sh", "./entrypoint.sh"]
-

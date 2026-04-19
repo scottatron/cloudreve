@@ -498,7 +498,8 @@ func handlePropfind(c *gin.Context, user *ent.User, fm manager.FileManager) (sta
 		return status, err
 	}
 
-	_, targetPath, err := fm.SharedAddressTranslation(c, reqPath)
+	ctx := dbfs.WithBypassOwnerCheck(c)
+	_, targetPath, err := fm.SharedAddressTranslation(ctx, reqPath)
 	if err != nil {
 		return purposeStatusCodeFromError(err), err
 	}
@@ -549,7 +550,7 @@ func handlePropfind(c *gin.Context, user *ent.User, fm manager.FileManager) (sta
 		return mw.write(makePropstatResponse(p, pstats))
 	}
 
-	if err := fm.Walk(c, targetPath, depth, walkFn, dbfs.WithFilePublicMetadata()); err != nil {
+	if err := fm.Walk(ctx, targetPath, depth, walkFn, dbfs.WithFilePublicMetadata()); err != nil {
 		return purposeStatusCodeFromError(err), err
 	}
 
