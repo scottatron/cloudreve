@@ -43,10 +43,6 @@ RUN mkdir -p application/statics \
         -ldflags="-s -w -X github.com/cloudreve/Cloudreve/v4/application/constants.BackendVersion=${VERSION} -X github.com/cloudreve/Cloudreve/v4/application/constants.LastCommit=${COMMIT}" \
         -o /out/cloudreve .
 
-FROM scratch AS cloudreve-binary-export
-
-COPY --from=cloudreve-binary-builder /out/cloudreve /cloudreve
-
 FROM alpine:latest
 
 WORKDIR /cloudreve
@@ -66,7 +62,7 @@ ENV CR_ENABLE_ARIA2=1 \
     CR_SETTING_DEFAULT_thumb_libraw_enabled=1
 
 COPY .build/aria2.supervisor.conf .build/entrypoint.sh ./
-COPY --from=cloudreve-binary /cloudreve /cloudreve
+COPY --from=cloudreve-binary-builder /out/cloudreve /cloudreve
 
 RUN chmod +x ./cloudreve \
     && chmod +x ./entrypoint.sh

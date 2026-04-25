@@ -1,36 +1,5 @@
 steps:
-  - label: ":package: Build cloudreve binary"
-    key: "build-cloudreve-binary"
-    if_changed:
-      - ".build/**"
-      - ".goreleaser.yaml"
-      - "application/**"
-      - "assets/**"
-      - "cmd/**"
-      - "ent/**"
-      - "go.mod"
-      - "go.sum"
-      - "inventory/**"
-      - "main.go"
-      - "middleware/**"
-      - "mise.toml"
-      - "pkg/**"
-      - "routers/**"
-      - "service/**"
-      - "Dockerfile"
-      - "docker-bake.hcl"
-      - ".buildkite/pipeline.yml"
-    agents: { queue: home-infra }
-    command: |
-      set -euo pipefail
-      COMMIT="${BUILDKITE_COMMIT:0:7}" docker buildx bake cloudreve-binary-amd64
-      buildkite-agent artifact upload "dist/cloudreve_linux_amd64_v1/cloudreve"
-    plugins:
-      - kubernetes:
-          podTemplate: buildkit
   - label: ":docker: Build cloudreve"
-    key: "build-cloudreve-image"
-    depends_on: "build-cloudreve-binary"
     if_changed:
       - ".build/**"
       - ".goreleaser.yaml"
@@ -53,8 +22,7 @@ steps:
     agents: { queue: home-infra }
     command: |
       set -euo pipefail
-      buildkite-agent artifact download "dist/cloudreve_linux_amd64_v1/cloudreve" .
-      docker buildx bake cloudreve-amd64
+      COMMIT="${BUILDKITE_COMMIT:0:7}" docker buildx bake cloudreve-amd64
     plugins:
       - kubernetes:
           podTemplate: buildkit
