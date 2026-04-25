@@ -1,0 +1,6 @@
+.git
+.buildkite
+application/statics/assets.zip
+assets/build
+assets/node_modules
+dist
