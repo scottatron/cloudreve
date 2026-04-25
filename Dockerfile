@@ -33,15 +33,14 @@ COPY routers ./routers
 COPY service ./service
 COPY main.go ./
 
-COPY --from=assets-builder /src/assets/build /tmp/assets/build
+COPY --from=assets-builder /src/assets/build /src/assets/build
 
 RUN mkdir -p application/statics \
-    && cd /tmp \
-    && zip -r - assets/build > /src/application/statics/assets.zip \
+    && zip -r - assets/build > application/statics/assets.zip \
     && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 \
-        go build -trimpath \
-        -ldflags="-s -w -X github.com/cloudreve/Cloudreve/v4/application/constants.BackendVersion=${VERSION} -X github.com/cloudreve/Cloudreve/v4/application/constants.LastCommit=${COMMIT}" \
-        -o /out/cloudreve .
+    go build -trimpath \
+    -ldflags="-s -w -X github.com/cloudreve/Cloudreve/v4/application/constants.BackendVersion=${VERSION} -X github.com/cloudreve/Cloudreve/v4/application/constants.LastCommit=${COMMIT}" \
+    -o /out/cloudreve .
 
 FROM alpine:latest
 
