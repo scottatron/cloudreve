@@ -1,0 +1,5 @@
+selected_org: scottatron
+pipelines:
+- cloudreve
+no_pager: true
+output_format: text

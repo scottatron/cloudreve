@@ -1,0 +1,13 @@
+steps:
+  - label: ":docker: Build cloudreve"
+    if_changed:
+      - "Dockerfile"
+      - "docker-bake.hcl"
+      - ".build/aria2.supervisor.conf"
+      - ".build/entrypoint.sh"
+      - ".buildkite/pipeline.yml"
+    agents: { queue: home-infra }
+    command: docker buildx bake cloudreve-amd64
+    plugins:
+      - kubernetes:
+          podTemplate: buildkit
